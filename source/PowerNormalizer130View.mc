@@ -2,7 +2,6 @@ import Toybox.Activity;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
-using Toybox.Application.Storage;
 
 class PowerNormalizer130View extends WatchUi.DataField
 {
@@ -10,17 +9,19 @@ class PowerNormalizer130View extends WatchUi.DataField
     hidden var _buffer as Array;
     hidden var _nSamples as Number;
     hidden var _frontIndex as Number;
+    hidden var _prevTime as Number;
 
     function initialize()
     {
 		// basic init
         DataField.initialize();
+        _prevTime = 0;
+        _average = 0.0f;
 
         // create buffer
         _buffer = new[30];
         _frontIndex = 0;
         _nSamples = 0;
-        _average = 0.0f;
     }
 
     // Set your layout here.
@@ -37,13 +38,18 @@ class PowerNormalizer130View extends WatchUi.DataField
     {
     	// check info
     	if(!(info has :currentPower)) { return; }
+        if(!(info has :timerTime)) { return; }
+
+        // check elapsed time
+        if(info.timerTime == null || info.timerTime == _prevTime) { return; }
+        _prevTime = info.timerTime;
         
     	// get current power, buffer value
         var currentPower as Float = info.currentPower != null ? info.currentPower * 1.0f : 0.0f;
         _buffer[_frontIndex] = currentPower;
         _frontIndex++;
-        if(_nSamples < _buffer.size()) {_nSamples++;}
-        if(_frontIndex == _buffer.size()) {_frontIndex = 0;}
+        if(_nSamples < _buffer.size()) { _nSamples++; }
+        if(_frontIndex == _buffer.size()) { _frontIndex = 0; }
 
         // calculate average
         var powerSum as Float = 0.0f;
