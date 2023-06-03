@@ -5,7 +5,7 @@ import Toybox.WatchUi;
 
 class PowerNormalizer130View extends WatchUi.DataField
 {
-	hidden var _average as Float;
+	hidden var _rollingAverage as Float;
     hidden var _buffer as Array;
     hidden var _nSamples as Number;
     hidden var _frontIndex as Number;
@@ -16,7 +16,7 @@ class PowerNormalizer130View extends WatchUi.DataField
 		// basic init
         DataField.initialize();
         _prevTime = 0;
-        _average = 0.0f;
+        _rollingAverage = 0.0f;
 
         // create buffer
         _buffer = new[30];
@@ -59,7 +59,7 @@ class PowerNormalizer130View extends WatchUi.DataField
             powerSum += _buffer[i];
             i++;
         }
-        _average = powerSum / _nSamples;
+        _rollingAverage = powerSum / _nSamples;
     }
 
     // Display the value you computed here. This will be called once a second when the data field is visible.
@@ -70,7 +70,7 @@ class PowerNormalizer130View extends WatchUi.DataField
                   
         // set value
         var value = View.findDrawableById("value") as Text;
-        value.setText(_average.format("%.2f"));
+        value.setText(_rollingAverage.format("%.1f"));
 
         // call parent's onUpdate(dc) to redraw the layout
         View.onUpdate(dc);
