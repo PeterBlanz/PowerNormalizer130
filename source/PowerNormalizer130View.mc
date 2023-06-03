@@ -7,7 +7,7 @@ class PowerNormalizer130View extends WatchUi.DataField
 {
 	hidden var _rollingAverage as Float;
     hidden var _buffer as Array;
-    hidden var _nSamples as Number;
+    hidden var _nBuffered as Number;
     hidden var _frontIndex as Number;
     hidden var _prevTime as Number;
 
@@ -21,7 +21,7 @@ class PowerNormalizer130View extends WatchUi.DataField
         // create buffer
         _buffer = new[30];
         _frontIndex = 0;
-        _nSamples = 0;
+        _nBuffered = 0;
     }
 
     // Set your layout here.
@@ -45,21 +45,21 @@ class PowerNormalizer130View extends WatchUi.DataField
         _prevTime = info.timerTime;
         
     	// get current power, buffer value
-        var currentPower as Float = info.currentPower != null ? info.currentPower * 1.0f : 0.0f;
-        _buffer[_frontIndex] = currentPower;
+        var powerSample as Float = info.currentPower != null ? info.currentPower * 1.0f : 0.0f;
+        _buffer[_frontIndex] = powerSample;
         _frontIndex++;
-        if(_nSamples < _buffer.size()) { _nSamples++; }
+        if(_nBuffered < _buffer.size()) { _nBuffered++; }
         if(_frontIndex == _buffer.size()) { _frontIndex = 0; }
 
         // calculate average
         var powerSum as Float = 0.0f;
         var i as Number = 0;
-        while(i < _nSamples)
+        while(i < _nBuffered)
         {
             powerSum += _buffer[i];
             i++;
         }
-        _rollingAverage = powerSum / _nSamples;
+        _rollingAverage = powerSum / _nBuffered;
     }
 
     // Display the value you computed here. This will be called once a second when the data field is visible.
