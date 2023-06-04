@@ -32,8 +32,11 @@ class PowerNormalizer130View extends WatchUi.DataField
     function onLayout(dc as Dc) as Void
     {
         View.setLayout(Rez.Layouts.MainLayout(dc));
-        
-        // var valueView = View.findDrawableById("value");
+        var titleView = View.findDrawableById("title");
+        titleView.locY -= 5;
+        titleView.setText("NP");
+        var valueView = View.findDrawableById("value");
+        valueView.setText("---");
     }
 
     // The given info object contains all the current workout information. Calculate a value and save it locally in this method.
@@ -79,7 +82,7 @@ class PowerNormalizer130View extends WatchUi.DataField
                   
         // set value
         var value = View.findDrawableById("value") as Text;
-        value.setText(Math.pow(_avgOfPowered, 0.25f).format("%.1f"));
+        if (_nTotal > 0) { value.setText(Math.pow(_avgOfPowered, 0.25f).format("%.1f")); }
 
         // call parent's onUpdate(dc) to redraw the layout
         View.onUpdate(dc);
